@@ -1,0 +1,68 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Socio {
+  activo         Boolean?
+  apellido       String?
+  correo         String?
+  createdAt      DateTime        @default(now())
+  fechaRegistro  DateTime?
+  id             String          @id @default(cuid())
+  inscripcions   Inscripcion[]
+  nombre         String?
+  servicioExtras ServicioExtra[]
+  telefono       String?
+  updatedAt      DateTime        @updatedAt
+}
+
+model Inscripcion {
+  createdAt   DateTime             @default(now())
+  fechaFin    DateTime?
+  fechaInicio DateTime?
+  id          String               @id @default(cuid())
+  pagos       Pago[]
+  plan        EnumInscripcionPlan?
+  socio       Socio?               @relation(fields: [socioId], references: [id])
+  socioId     String?
+  updatedAt   DateTime             @updatedAt
+}
+
+model Pago {
+  createdAt     DateTime            @default(now())
+  fechaPago     DateTime?
+  id            String              @id @default(cuid())
+  inscripcion   Inscripcion?        @relation(fields: [inscripcionId], references: [id])
+  inscripcionId String?
+  metodoPago    EnumPagoMetodoPago?
+  monto         Float?
+  updatedAt     DateTime            @updatedAt
+}
+
+model ServicioExtra {
+  createdAt    DateTime                       @default(now())
+  fechaFin     DateTime?
+  fechaInicio  DateTime?
+  id           String                         @id @default(cuid())
+  socio        Socio?                         @relation(fields: [socioId], references: [id])
+  socioId      String?
+  tipoServicio EnumServicioExtraTipoServicio?
+  updatedAt    DateTime                       @updatedAt
+}
+
+enum EnumInscripcionPlan {
+  Option1
+}
+
+enum EnumPagoMetodoPago {
+  Option1
+}
+
+enum EnumServicioExtraTipoServicio {
+  Option1
+}
